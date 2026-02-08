@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>党员信息查询系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <style>
+        :root {
+            --primary-color: #1e3c72;
+            --secondary-color: #2a5298;
+            --accent-color: #4a6fa5;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 顶部导航 */
+        .navbar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .logo .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 25px;
+            text-align: center;
+        }
+
+        .stat-item {
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* 搜索框 */
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid #e1e5eb;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        /* 党员网格 */
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+
+        .member-id {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .member-position {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-item i {
+            width: 24px;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-right: 15px;
+        }
+
+        .info-content h4 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .info-content p {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .card-footer {
+            padding: 0 25px 25px;
+            text-align: center;
+        }
+
+        .view-btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .view-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #e1e5eb;
+            margin-top: 40px;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .member-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <nav class="navbar">
+            <div class="logo">
+                <div>
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <h1>党员信息查询系统</h1>
+                    <div class="subtitle">数据实时同步 · 信息透明公开</div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">党员总数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">技术部党员</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">02.08</div>
+                    <div class="stat-label">最后更新</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索党员姓名、部门或职务...">
+            </div>
+        </div>
+
+        <!-- 党员列表 -->
+        <div class="member-grid" id="memberGrid">
+
+            <div class="member-card" data-member-id="P001" data-name="肖乾胜" data-dept="配网综合班" data-pos="配电自动化">
+                <div class="card-header">
+                    <div class="member-id">P001</div>
+                    <h2 class="member-name">肖乾胜</h2>
+                    <div class="member-position">配电自动化</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="info-item">
+                        <i class="fas fa-building"></i>
+                        <div class="info-content">
+                            <h4>所在部门</h4>
+                            <p>配网综合班</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info-content">
+                            <h4>联系电话</h4>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-content">
+                            <h4>入党时间</h4>
+                            <p>请填写（格式：YYYY-MM-DD）</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="members/P001.html" class="view-btn">
+                        <i class="fas fa-user-circle"></i> 查看详细档案
+                    </a>
+                </div>
+            </div>
+            <div class="member-card" data-member-id="P002" data-name="未设置" data-dept="未设置" data-pos="未设置">
+                <div class="card-header">
+                    <div class="member-id">P002</div>
+                    <h2 class="member-name">未设置</h2>
+                    <div class="member-position">未设置</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="info-item">
+                        <i class="fas fa-building"></i>
+                        <div class="info-content">
+                            <h4>所在部门</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info-content">
+                            <h4>联系电话</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-content">
+                            <h4>入党时间</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="members/P002.html" class="view-btn">
+                        <i class="fas fa-user-circle"></i> 查看详细档案
+                    </a>
+                </div>
+            </div>
+            <div class="member-card" data-member-id="P003" data-name="未设置" data-dept="未设置" data-pos="未设置">
+                <div class="card-header">
+                    <div class="member-id">P003</div>
+                    <h2 class="member-name">未设置</h2>
+                    <div class="member-position">未设置</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="info-item">
+                        <i class="fas fa-building"></i>
+                        <div class="info-content">
+                            <h4>所在部门</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info-content">
+                            <h4>联系电话</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-content">
+                            <h4>入党时间</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="members/P003.html" class="view-btn">
+                        <i class="fas fa-user-circle"></i> 查看详细档案
+                    </a>
+                </div>
+            </div>
+            <div class="member-card" data-member-id="P004" data-name="未设置" data-dept="未设置" data-pos="未设置">
+                <div class="card-header">
+                    <div class="member-id">P004</div>
+                    <h2 class="member-name">未设置</h2>
+                    <div class="member-position">未设置</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="info-item">
+                        <i class="fas fa-building"></i>
+                        <div class="info-content">
+                            <h4>所在部门</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info-content">
+                            <h4>联系电话</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-content">
+                            <h4>入党时间</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="members/P004.html" class="view-btn">
+                        <i class="fas fa-user-circle"></i> 查看详细档案
+                    </a>
+                </div>
+            </div>
+            <div class="member-card" data-member-id="P005" data-name="未设置" data-dept="未设置" data-pos="未设置">
+                <div class="card-header">
+                    <div class="member-id">P005</div>
+                    <h2 class="member-name">未设置</h2>
+                    <div class="member-position">未设置</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="info-item">
+                        <i class="fas fa-building"></i>
+                        <div class="info-content">
+                            <h4>所在部门</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info-content">
+                            <h4>联系电话</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-content">
+                            <h4>入党时间</h4>
+                            <p>未设置</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="members/P005.html" class="view-btn">
+                        <i class="fas fa-user-circle"></i> 查看详细档案
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer>
+            <div class="footer-info">
+                <div><i class="fas fa-sync-alt"></i> 数据同步自金山文档</div>
+                <div><i class="fas fa-clock"></i> 最后生成: 2026-02-08 14:16</div>
+                <div><i class="fas fa-shield-alt"></i> 信息安全保障</div>
+            </div>
+            <div class="copyright">
+                © 2024 党员信息管理系统 v2.0 | 技术支持：系统管理团队
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {{
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.member-card');
+
+            cards.forEach(card => {{
+                const name = card.getAttribute('data-name').toLowerCase();
+                const dept = card.getAttribute('data-dept').toLowerCase();
+                const pos = card.getAttribute('data-pos').toLowerCase();
+                const id = card.getAttribute('data-member-id').toLowerCase();
+
+                if (name.includes(searchTerm) || dept.includes(searchTerm) || 
+                    pos.includes(searchTerm) || id.includes(searchTerm)) {{
+                    card.style.display = 'block';
+                }} else {{
+                    card.style.display = 'none';
+                }}
+            }});
+        }});
+
+        // 卡片点击效果
+        document.querySelectorAll('.member-card').forEach(card => {{
+            card.addEventListener('click', function(e) {{
+                // 防止点击按钮时触发
+                if (!e.target.closest('.view-btn')) {{
+                    const memberId = this.getAttribute('data-member-id');
+                    window.location.href = `members/${{memberId}}.html`;
+                }}
+            }});
+        }});
+    </script>
+</body>
+</html>
